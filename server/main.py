@@ -10,12 +10,12 @@ from core.exercise_logic import BicepCurl, Squat
 from db.db_manager import DBManager
 from services.data_recorder import DataRecorder
 from services.recorder_service import RecorderService
-from models.autoencoder_model import FormAutoencoder
-from models.tcn_model import TCNModel
+# from models.autoencoder_model import FormAutoencoder
+# from models.tcn_model import TCNModel
 
 # Initialize models globally (load weights if available)
-auto_model = FormAutoencoder(model_path="data/autoencoder_weights.h5")
-tcn_model = TCNModel(model_path="data/tcn_weights.h5")
+# auto_model = FormAutoencoder(model_path="data/autoencoder_weights.h5")
+# tcn_model = TCNModel(model_path="data/tcn_weights.h5")
 
 app = FastAPI()
 
@@ -144,15 +144,15 @@ async def websocket_endpoint(websocket: WebSocket):
                     
                     # Core ML execution: Continue propagating sequences to the Models, 
                     # but strip all heavy TCN/Anomaly scoring from the socket return payload for M1 Optimization
-                    if len(seq) >= 30:
-                        loop = asyncio.get_event_loop()
-                        if current_exercise_name == "Squat":
-                            future_tcn = loop.run_in_executor(None, tcn_model.predict_quality, seq)
-                            future_auto = loop.run_in_executor(None, auto_model.predict_anomaly, seq)
-                            await asyncio.gather(future_tcn, future_auto)
-                        else:
-                            future_auto = loop.run_in_executor(None, auto_model.predict_anomaly, seq)
-                            await future_auto
+                    # if len(seq) >= 30:
+                    #     loop = asyncio.get_event_loop()
+                    #     if current_exercise_name == "Squat":
+                    #         future_tcn = loop.run_in_executor(None, tcn_model.predict_quality, seq)
+                    #         future_auto = loop.run_in_executor(None, auto_model.predict_anomaly, seq)
+                    #         await asyncio.gather(future_tcn, future_auto)
+                    #     else:
+                    #         future_auto = loop.run_in_executor(None, auto_model.predict_anomaly, seq)
+                    #         await future_auto
                             
                 # 5. M1 Optimization: Strip dead-weight JSON out of the Hot-Loop Response
                 await websocket.send_json({
