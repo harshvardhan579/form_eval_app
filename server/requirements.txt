@@ -4,6 +4,5 @@ websockets
 numpy
 mediapipe==0.10.32
 opencv-python-headless
-tensorflow==2.16.2
 supabase
 python-dotenv
