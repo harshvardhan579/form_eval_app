@@ -1,0 +1,23 @@
+# Python Environments & Cache
+__pycache__/
+*.py[cod]
+.env
+venv/
+venv_native/
+
+# Node/React
+node_modules/
+dist/
+.DS_Store
+
+# Data, Models, & Datasets (CRITICAL)
+server/data/
+server/models/*.h5
+Fitness-AQA/
+*.npy
+*.mp4
+*.zip
+
+# Exclude Penn Action / Large Label Datasets
+labels/
+*penn_action*
