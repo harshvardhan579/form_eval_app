@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, Conv1D, Flatten, Dense
+from tensorflow.keras.layers import Input, Conv1D, Flatten, Dense, BatchNormalization
 import sys
 
 from services.data_recorder import DataRecorder
@@ -23,15 +23,19 @@ class TCNModel:
         
         # Dilated Convolutions
         x = Conv1D(filters=64, kernel_size=3, dilation_rate=1, activation='relu', padding='causal')(inputs)
+        x = BatchNormalization()(x)
         x = Conv1D(filters=64, kernel_size=3, dilation_rate=2, activation='relu', padding='causal')(x)
+        x = BatchNormalization()(x)
         x = Conv1D(filters=64, kernel_size=3, dilation_rate=4, activation='relu', padding='causal')(x)
+        x = BatchNormalization()(x)
         
         x = Flatten()(x)
         x = Dense(32, activation='relu')(x)
         outputs = Dense(1, activation='sigmoid')(x) # Binary quality score 0-1
         
         tcn = Model(inputs, outputs)
-        tcn.compile(optimizer='adam', loss='binary_crossentropy')
+        adam_opt = tf.keras.optimizers.Adam(learning_rate=1e-4, clipnorm=1.0)
+        tcn.compile(optimizer=adam_opt, loss='binary_crossentropy')
         return tcn
         
     def predict_quality(self, sequence):

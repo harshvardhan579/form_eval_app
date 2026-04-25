@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { Group as PanelGroup, Panel, Separator as PanelResizeHandle } from "react-resizable-panels";
 import CameraFeed from './components/CameraFeed'
 import StatsPanel from './components/StatsPanel'
 import RecorderUI from './components/RecorderUI'
 import './styles/App.css'
 
-const REP_WORDS = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen','Twenty'];
+const REP_WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen', 'Twenty'];
 
 function App() {
   const [exercise, setExercise] = useState("Bicep Curl");
@@ -73,7 +74,9 @@ function App() {
   }, [stats.feedback, speak]);
 
   useEffect(() => {
-    const WS_URL = import.meta.env.VITE_WS_URL || "ws://localhost:8000";
+    // If Vercel doesn't have the environment variable set, it safely falls back to your Render backend.
+    // Notice the 'wss://' prefix instead of 'https://'
+    const WS_URL = import.meta.env.VITE_WS_URL || "wss://form-eval-app.onrender.com";
     const ws = new WebSocket(`${WS_URL}/ws/exercise`);
 
     ws.onopen = () => {
@@ -167,58 +170,72 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* ----- LEFT SIDEBAR (COMMAND CENTER) ----- */}
-      <div className="left-sidebar">
-        <div className="camera-module">
-          <CameraFeed onLandmarks={onLandmarks} isRecording={isRecording} feedback={stats.feedback} activeAngle={stats.activeAngle} activeJointCoords={stats.activeJointCoords} />
-        </div>
-        
-        <div className="config-module">
-          <label className="select-label" style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '1.2rem', opacity: 0.8 }}>
-            LIVE ML MODEL:
-            <select value={exercise} onChange={handleExerciseChange} className="glass-select" style={{ fontSize: '1.5rem', padding: '12px 16px', fontWeight: 'bold' }}>
-              <option value="Bicep Curl">Bicep Curl</option>
-              <option value="Squat">Squat</option>
-            </select>
-          </label>
-          <label className="select-label" style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '1.2rem', opacity: 0.8 }}>
-            FORM LABEL:
-            <select value={formLabel} onChange={(e) => setFormLabel(e.target.value)} className="glass-select" style={{ fontSize: '1.5rem', padding: '12px 16px', fontWeight: 'bold' }}>
-              <option value="Perfect">Perfect</option>
-              <option value="Flawed">Flawed</option>
-            </select>
-          </label>
-          <button onClick={handleReset} className="reset-btn glass-btn" style={{ fontSize: '1.2rem', padding: '12px' }}>🔄 Reset Engine</button>
-          <button onClick={() => setAudioMuted(m => !m)} className="glass-btn" style={{ fontSize: '1.2rem', padding: '12px', background: audioMuted ? 'rgba(239,68,68,0.2)' : 'rgba(34,197,94,0.2)', color: audioMuted ? '#f87171' : '#4ade80', borderColor: audioMuted ? 'rgba(239,68,68,0.5)' : 'rgba(34,197,94,0.5)' }}>{audioMuted ? '🔇 Voice Coach Off' : '🔊 Voice Coach On'}</button>
-        </div>
-      </div>
-      
-      {/* ----- RIGHT MAIN STAGE (TELEMETRY) ----- */}
-      <div className="right-main">
-        {toast && (
-          <div style={{ position: 'absolute', top: 20, right: 20, padding: '12px', background: '#22c55e', color: 'white', fontWeight: 'bold', borderRadius: '8px', textAlign: 'center', zIndex: 100, fontSize: '1.5rem', boxShadow: '0 4px 15px rgba(0,0,0,0.5)' }}>
-            {toast}
-          </div>
-        )}
-        
-        <StatsPanel
-          reps={stats.reps}
-          repPercent={stats.repPercent}
-          feedback={stats.feedback}
-          repFeedback={stats.repFeedback}
-          anomalyScore={stats.anomalyScore}
-          tcnScore={stats.tcnScore}
-          conflictWarning={stats.conflictWarning}
-          exercise={exercise}
-        >
-            <RecorderUI
-              wsRef={wsRef}
-              onRecordingStateChange={setIsRecording}
+      <PanelGroup direction="horizontal" autoSaveId="main-layout">
+        {/* ----- LEFT SIDEBAR (COMMAND CENTER) ----- */}
+        <Panel defaultSize={40} minSize={20}>
+          <PanelGroup direction="vertical" autoSaveId="left-sidebar-layout">
+            <Panel defaultSize={50} minSize={30}>
+              <div className="camera-module" style={{ width: '100%', height: '100%' }}>
+                <CameraFeed onLandmarks={onLandmarks} isRecording={isRecording} feedback={stats.feedback} activeAngle={stats.activeAngle} activeJointCoords={stats.activeJointCoords} />
+              </div>
+            </Panel>
+
+            <PanelResizeHandle className="resize-handle-horizontal" />
+
+            <Panel defaultSize={50} minSize={20}>
+              <div className="config-module" style={{ width: '100%', height: '100%', boxSizing: 'border-box' }}>
+                <label className="select-label" style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '1.2rem', opacity: 0.8 }}>
+                  LIVE ML MODEL:
+                  <select value={exercise} onChange={handleExerciseChange} className="glass-select" style={{ fontSize: '1.5rem', padding: '12px 16px', fontWeight: 'bold' }}>
+                    <option value="Bicep Curl">Bicep Curl</option>
+                    <option value="Squat">Squat</option>
+                  </select>
+                </label>
+                <label className="select-label" style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '1.2rem', opacity: 0.8 }}>
+                  FORM LABEL:
+                  <select value={formLabel} onChange={(e) => setFormLabel(e.target.value)} className="glass-select" style={{ fontSize: '1.5rem', padding: '12px 16px', fontWeight: 'bold' }}>
+                    <option value="Perfect">Perfect</option>
+                    <option value="Flawed">Flawed</option>
+                  </select>
+                </label>
+                <button onClick={handleReset} className="reset-btn glass-btn" style={{ fontSize: '1.2rem', padding: '12px' }}>🔄 Reset Engine</button>
+                <button onClick={() => setAudioMuted(m => !m)} className="glass-btn" style={{ fontSize: '1.2rem', padding: '12px', background: audioMuted ? 'rgba(239,68,68,0.2)' : 'rgba(34,197,94,0.2)', color: audioMuted ? '#f87171' : '#4ade80', borderColor: audioMuted ? 'rgba(239,68,68,0.5)' : 'rgba(34,197,94,0.5)' }}>{audioMuted ? '🔇 Voice Coach Off' : '🔊 Voice Coach On'}</button>
+              </div>
+            </Panel>
+          </PanelGroup>
+        </Panel>
+
+        <PanelResizeHandle className="resize-handle-vertical" />
+
+        {/* ----- RIGHT MAIN STAGE (TELEMETRY) ----- */}
+        <Panel defaultSize={60} minSize={30}>
+          <div className="right-main" style={{ width: '100%', height: '100%' }}>
+            {toast && (
+              <div style={{ position: 'absolute', top: 20, right: 20, padding: '12px', background: '#22c55e', color: 'white', fontWeight: 'bold', borderRadius: '8px', textAlign: 'center', zIndex: 100, fontSize: '1.5rem', boxShadow: '0 4px 15px rgba(0,0,0,0.5)' }}>
+                {toast}
+              </div>
+            )}
+
+            <StatsPanel
+              reps={stats.reps}
+              repPercent={stats.repPercent}
+              feedback={stats.feedback}
+              repFeedback={stats.repFeedback}
+              anomalyScore={stats.anomalyScore}
+              tcnScore={stats.tcnScore}
+              conflictWarning={stats.conflictWarning}
               exercise={exercise}
-              label={formLabel}
-            />
-        </StatsPanel>
-      </div>
+            >
+              <RecorderUI
+                wsRef={wsRef}
+                onRecordingStateChange={setIsRecording}
+                exercise={exercise}
+                label={formLabel}
+              />
+            </StatsPanel>
+          </div>
+        </Panel>
+      </PanelGroup>
     </div>
   )
 }

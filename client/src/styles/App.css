@@ -11,9 +11,6 @@ html, body, #root {
 }
 
 .app-container {
-  display: grid;
-  grid-template-columns: 2fr 3fr;
-  gap: 2rem;
   padding: 2rem;
   height: 100vh;
   box-sizing: border-box;
@@ -739,4 +736,41 @@ html, body, #root {
 @keyframes rec-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* Resize Handles */
+.resize-handle-vertical {
+  width: 12px;
+  background-color: transparent;
+  cursor: col-resize;
+  transition: background-color 0.2s ease;
+  position: relative;
+  z-index: 10;
+  margin: 0 8px;
+  border-radius: 6px;
+}
+
+.resize-handle-vertical:hover,
+.resize-handle-vertical[data-separator="drag"],
+.resize-handle-vertical[data-separator="active"] {
+  background-color: #3b82f6;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.resize-handle-horizontal {
+  height: 12px;
+  background-color: transparent;
+  cursor: row-resize;
+  transition: background-color 0.2s ease;
+  position: relative;
+  z-index: 10;
+  margin: 8px 0;
+  border-radius: 6px;
+}
+
+.resize-handle-horizontal:hover,
+.resize-handle-horizontal[data-separator="drag"],
+.resize-handle-horizontal[data-separator="active"] {
+  background-color: #3b82f6;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
 }

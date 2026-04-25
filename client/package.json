@@ -14,7 +14,8 @@
     "@mediapipe/drawing_utils": "^0.3.1675466124",
     "@mediapipe/pose": "^0.5.1675469404",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-resizable-panels": "^4.10.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

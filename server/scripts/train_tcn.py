@@ -54,7 +54,7 @@ def train():
     
     callbacks = [
         tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=7, restore_best_weights=True),
-        tf.keras.callbacks.ModelCheckpoint(filepath=os.path.join(MODELS_DIR, "tcn_squat_best.h5"), 
+        tf.keras.callbacks.ModelCheckpoint(filepath=os.path.join(MODELS_DIR, "tcn_squat_best.weights.h5"), 
                                            monitor='val_loss', save_best_only=True, save_weights_only=True),
         tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3)
     ]
