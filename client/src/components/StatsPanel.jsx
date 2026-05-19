@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/App.css';
 
-const StatsPanel = React.memo(({ reps, repPercent, feedback, repFeedback, anomalyScore, tcnScore, conflictWarning, exercise, children }) => {
+const StatsPanel = React.memo(({ reps, repPercent, feedback, children }) => {
     const msg = (feedback || "").toLowerCase();
     const isOutOfFrame = msg === "out_of_frame";
     const isInitialState = reps === 0 && repPercent === 0;

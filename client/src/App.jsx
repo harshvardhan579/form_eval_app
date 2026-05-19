@@ -11,7 +11,6 @@ function App() {
   const [exercise, setExercise] = useState("Bicep Curl");
   const [formLabel, setFormLabel] = useState("Perfect");
   const [isRecording, setIsRecording] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState(null);
   const [audioMuted, setAudioMuted] = useState(false);
 
@@ -89,7 +88,6 @@ function App() {
       const data = JSON.parse(event.data);
 
       if (data.type === "RECORDING_SAVED") {
-        setIsSaving(false);
         setIsRecording(false);
         showToast("Session Saved!");
         if (ws._recorderHandler) ws._recorderHandler(data);
@@ -133,6 +131,7 @@ function App() {
         ws.close();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run once on mount
 
   const onLandmarks = useCallback((landmarks) => {

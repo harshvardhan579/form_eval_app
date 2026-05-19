@@ -83,7 +83,7 @@ const CameraFeed = ({ onLandmarks, isRecording, feedback, activeAngle, activeJoi
                         visibility: visAvg.toFixed(2),
                         caving: isCaving
                     });
-                } catch (e) {
+                } catch {
                     // Ignore math errors on missing landmarks
                 }
 
